@@ -1,0 +1,18 @@
+# Ambientes virtuais
+.venv/
+venv/
+ENV/
+env/
+
+# Cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Arquivos de saída esperados
+freudenstein_resultados.png
+
+# Pyenv
+.python-version
