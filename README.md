@@ -38,3 +38,22 @@ python freudenstein_newton_raphson.py
 ```
 
 *Para desativar o ambiente virtual quando terminar, execute:* `deactivate`
+
+## 4. Inserindo a Tabela no Overleaf
+
+A execução gera o arquivo `freudenstein_tabela.tex` com a tabela de resultados formatada em LaTeX.
+
+**Pacotes necessários** — adicione ao preâmbulo do seu documento:
+
+```latex
+\usepackage{longtable}  % tabelas multi-página
+\usepackage{booktabs}   % réguas horizontais profissionais (\toprule, \midrule, \bottomrule)
+```
+
+**Inserindo a tabela** — no corpo do documento, onde desejar:
+
+```latex
+\input{freudenstein_tabela.tex}
+```
+
+Referência cruzada: `Tabela~\ref{tab:freudenstein}`

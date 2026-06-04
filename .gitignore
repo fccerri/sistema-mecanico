@@ -13,6 +13,7 @@ __pycache__/
 
 # Arquivos de saída esperados
 freudenstein_resultados.png
+freudenstein_tabela.tex
 
 # Pyenv
 .python-version
