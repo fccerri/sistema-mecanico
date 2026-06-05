@@ -203,42 +203,6 @@ def plotar(betas,
     print("\n✔ Gráfico salvo em 'freudenstein_resultados.png'")
 
 
-<<<<<<< HEAD
-def gerar_latex(betas, solucoes, iteracoes, convergencias, arquivo="freudenstein_tabela.tex"):
-    header = (
-        r"$\beta$ (rad) & $\beta$ ($^\circ$) & $x$ (rad) & $x$ ($^\circ$)"
-        r" & Itera\c{c}\~oes & Conv. \\\\"
-    )
-    linhas = [
-        r"\begin{longtable}{rrrrrr}",
-        r"\caption{Resultados da Equa\c{c}\~ao de Freudenstein -- M\'etodo de Newton-Raphson}",
-        r"\label{tab:freudenstein}\\",
-        r"\toprule",
-        header,
-        r"\midrule",
-        r"\endfirsthead",
-        r"\multicolumn{6}{c}{\tablename\ \thetable{} -- continua\c{c}\~ao}\\",
-        r"\toprule",
-        header,
-        r"\midrule",
-        r"\endhead",
-        r"\midrule",
-        r"\multicolumn{6}{r}{\textit{continua na pr\'oxima p\'agina}}\\",
-        r"\endfoot",
-        r"\bottomrule",
-        r"\endlastfoot",
-    ]
-    for b, s, it, c in zip(betas, solucoes, iteracoes, convergencias):
-        conv = "Sim" if c else "N\\~ao"
-        linhas.append(
-            f"{b:.6f} & {np.degrees(b):.3f} & {s:.6f} & {np.degrees(s):.3f} & {it} & {conv} \\\\"
-        )
-    linhas.append(r"\end{longtable}")
-
-    with open(arquivo, "w", encoding="utf-8") as fout:
-        fout.write("\n".join(linhas))
-    print(f"\u2714 Tabela LaTeX salva em '{arquivo}'")
-=======
 def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
     # Varre o plano (β, x0): para cada semente x0 e cada β aplica Newton-Raphson
     # e colore o ponto conforme o ramo encontrado. A fronteira entre as bacias
@@ -335,7 +299,6 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
     plt.show()
 
     print("\n✔ Gráfico salvo em 'freudenstein_bacias.png'")
->>>>>>> 2b93e0489f0d007bd56036e1d9218224feb0550b
 
 
 def main():
@@ -346,26 +309,15 @@ def main():
     solucoes1, iteracoes1, convergencias1 = resolver(betas, -0.1)
     solucoes2, iteracoes2, convergencias2 = resolver(betas, 2*np.pi/3)
 
-<<<<<<< HEAD
-    print(f"\n{'β (rad)':>12} {'β (°)':>10} {'x (rad)':>12} {'x (°)':>10} {'Iter':>6} {'Conv':>5}")
-    print("-" * 60)
-    for b, s, it, c in zip(betas, solucoes, iteracoes, convergencias):
-        print(f"{b:12.6f} {np.degrees(b):10.3f} {s:12.6f} {np.degrees(s):10.3f} {it:6d} {'✔' if c else '✘':>5}")
-=======
     # # Tabela de resultados
     # print(f"\n{'β (°)':>10} {'x (°)':>10} {'x (rad)':>12} {'Iter':>6} {'Conv':>5}")
     # print("-" * 50)
     # for b, s, it, c in zip(betas, solucoes, iteracoes, convergencias):
     #     print(f"{np.degrees(b):10.3f} {np.degrees(s):10.3f} {s:12.6f} {it:6d} {'✔' if c else '✘':>5}")
->>>>>>> 2b93e0489f0d007bd56036e1d9218224feb0550b
 
     print(f"\nConvergiram (x0=-0.1): {np.sum(convergencias1)}/{len(betas)}")
     print(f"Convergiram (x0=2π/3): {np.sum(convergencias2)}/{len(betas)}")
 
-<<<<<<< HEAD
-    gerar_latex(betas, solucoes, iteracoes, convergencias)
-    plotar(betas, solucoes, iteracoes)
-=======
     plotar(
         betas,
         solucoes1, iteracoes1, convergencias1,
@@ -373,7 +325,6 @@ def main():
     )
 
     plotar_bacias()
->>>>>>> 2b93e0489f0d007bd56036e1d9218224feb0550b
 
 
 if __name__ == "__main__":
