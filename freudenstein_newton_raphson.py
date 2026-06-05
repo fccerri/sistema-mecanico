@@ -10,7 +10,7 @@ L4 = 10.0
 # Parâmetros do método
 TOL_REL = 1e-6
 MAX_ITER = 100
-NUM_BETA = 60
+NUM_BETA = 500
 BETA_MIN = 0.0
 BETA_MAX = 2 * np.pi
 
@@ -60,7 +60,7 @@ def resolver(betas, x0):
 
         if conv:
             solucoes[i] = np.mod(x_sol, 2*np.pi)
-            # x0 = solucoes[i]
+            # x0 = solucoes[i] //seed movel  passada pro tracar ramos
 
     return solucoes, iteracoes, convergencias
 
@@ -123,7 +123,11 @@ def tracar_ramos(betas):
 
 def plotar(betas,
            solucoes1, iteracoes1, convergencias1,
-           solucoes2, iteracoes2, convergencias2):
+           solucoes2, iteracoes2, convergencias2,
+           titulo="Equação de Freudenstein",
+           label1=r"$\alpha_0=-0.1$",
+           label2=r"$\alpha_0=2\pi/3$",
+           arquivo="freudenstein_resultados.png"):
 
     betas_deg = np.degrees(betas)
 
@@ -133,7 +137,7 @@ def plotar(betas,
     fig, ax = plt.subplots(figsize=(10, 6))
 
     fig.suptitle(
-        "Equação de Freudenstein — Newton-Raphson",
+        titulo,
         fontsize=14,
         fontweight="bold"
     )
@@ -173,7 +177,7 @@ def plotar(betas,
         "o-",
         markersize=4,
         linewidth=1.5,
-        label=r"$x_0=-0.1$"
+        label=label1 
     )
 
     ax.plot(
@@ -181,12 +185,12 @@ def plotar(betas,
         solucoes2_deg,
         "s-",
         markersize=4,
-        linewidth=1.5,
-        label=r"$x_0=2\pi/3$"
+        linewidth=1.5,  
+        label=label2 
     )
 
     ax.set_xlabel(r"$\beta$ (graus)", fontsize=12)
-    ax.set_ylabel(r"$x$ (graus)", fontsize=12)
+    ax.set_ylabel(r"$\alpha$ (graus)", fontsize=12)
     ax.set_title("Raízes obtidas para dois valores iniciais", fontsize=12)
 
     ax.legend()
@@ -194,7 +198,7 @@ def plotar(betas,
 
     plt.tight_layout()
     plt.savefig(
-        "freudenstein_resultados.png",
+        arquivo, 
         dpi=150,
         bbox_inches="tight"
     )
@@ -273,7 +277,7 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
         color="cyan",
         linewidth=1.8,
         linestyle="--",
-        label=r"$x_0=-0.1$"
+        label=r"$\alpha_0=-0.1$"
     )
 
     ax.axhline(
@@ -281,11 +285,11 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
         color="magenta",
         linewidth=1.8,
         linestyle="--",
-        label=r"$x_0=2\pi/3$"
+        label=r"$\alpha_0=2\pi/3$"
     )
 
     ax.set_xlabel(r"$\beta$ (graus)", fontsize=12)
-    ax.set_ylabel(r"$x_0$ (semente, rad)", fontsize=12)
+    ax.set_ylabel(r"$\alpha_0$ (semente, rad)", fontsize=12)
     ax.set_title("Preto = não converge · azul/laranja = ramo encontrado", fontsize=12)
 
     ax.legend(loc="upper right", framealpha=0.9)
@@ -306,23 +310,50 @@ def main():
     print(f"β ∈ [0°, {np.degrees(BETA_MAX):.1f}°] | {NUM_BETA} valores | tol={TOL_REL:.0e} | max_iter={MAX_ITER}")
 
     betas = np.linspace(BETA_MIN, BETA_MAX, NUM_BETA)
-    solucoes1, iteracoes1, convergencias1 = resolver(betas, -0.1)
-    solucoes2, iteracoes2, convergencias2 = resolver(betas, 2*np.pi/3)
+
+    print("\nCalculando via semente fixa...")
+    solucoes1, iteracoes_fixa_1, convergencias_fixa_1 = resolver(betas, -0.1)
+    solucoes2, iteracoes_fixa_2, convergencias_fixa_2 = resolver(betas, 2*np.pi/3)
+
+    plotar(
+        betas,
+        solucoes1, iteracoes_fixa_1, convergencias_fixa_1,
+        solucoes2, iteracoes_fixa_2, convergencias_fixa_2,
+        titulo="Soluções com Newton-Raphson (Semente Fixa)",
+        label1=r"$\alpha_0=-0.1$",
+        label2=r"$\alpha_0=2\pi/3$",
+        arquivo="freudenstein_solucoes_fixa.png"
+    )
+
+    print(f"\nConvergiram (alpha_0=-0.1): {np.sum(convergencias_fixa_1)}/{len(betas)}")
+    print(f"Convergiram (alpha_0=2π/3): {np.sum(convergencias_fixa_2)}/{len(betas)}")
+
+    ramo1, ramo2 = tracar_ramos(betas)
+
+    convergencias_movel_1 = ~np.isnan(ramo1)
+    convergencias_movel_2 = ~np.isnan(ramo2)
+    
+    iteracoes_movel_1 = np.zeros_like(betas)
+    iteracoes_movel_2 = np.zeros_like(betas)
+
+    plotar(
+        betas,
+        ramo1, iteracoes_movel_1, convergencias_movel_1,
+        ramo2, iteracoes_movel_2, convergencias_movel_2,
+        titulo="Traçado de Ramos (Semente Móvel)",
+        label1="Ramo 1",
+        label2="Ramo 2",
+        arquivo="freudenstein_ramos_continuidade.png"
+    )
+
+    print(f"\nConvergiram (ramo1: {np.sum(convergencias_movel_1)}/{len(betas)}")
+    print(f"Convergiram (ramo2): {np.sum(convergencias_movel_2)}/{len(betas)}")
 
     # # Tabela de resultados
     # print(f"\n{'β (°)':>10} {'x (°)':>10} {'x (rad)':>12} {'Iter':>6} {'Conv':>5}")
     # print("-" * 50)
     # for b, s, it, c in zip(betas, solucoes, iteracoes, convergencias):
     #     print(f"{np.degrees(b):10.3f} {np.degrees(s):10.3f} {s:12.6f} {it:6d} {'✔' if c else '✘':>5}")
-
-    print(f"\nConvergiram (x0=-0.1): {np.sum(convergencias1)}/{len(betas)}")
-    print(f"Convergiram (x0=2π/3): {np.sum(convergencias2)}/{len(betas)}")
-
-    plotar(
-        betas,
-        solucoes1, iteracoes1, convergencias1,
-        solucoes2, iteracoes2, convergencias2
-    )
 
     plotar_bacias()
 
