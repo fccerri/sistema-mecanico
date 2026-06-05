@@ -12,8 +12,8 @@ __pycache__/
 .pytest_cache/
 
 # Arquivos de saída esperados
-freudenstein_resultados.png
-freudenstein_tabela.tex
+*.png
+.tex
 
 # Pyenv
 .python-version
