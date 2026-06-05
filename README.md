@@ -33,8 +33,8 @@ pip install numpy matplotlib pygame
 
 Com o ambiente virtual ativo, você pode executar tanto o solver numérico quanto a animação interativa.
 
-### Executar o Solver e Gerar Dados/Tabela
-Para rodar o script principal que gera o gráfico estático e a tabela de convergência em LaTeX:
+### Executar o Solver e Gerar Dados
+Para rodar o script principal que gera o gráfico estático:
 ```bash
 python freudenstein_newton_raphson.py
 ```
@@ -53,22 +53,3 @@ python freudenstein_newton_raphson.py
 > - **Feedback Visual de Convergência:** O mecanismo é desenhado na tela somente se o solver convergir. Caso contrário, um aviso visual vermelho de falha é exibido.
 
 *Para desativar o ambiente virtual quando terminar, execute:* `deactivate`
-
-## 4. Inserindo a Tabela no Overleaf
-
-A execução gera o arquivo `freudenstein_tabela.tex` com a tabela de resultados formatada em LaTeX.
-
-**Pacotes necessários** — adicione ao preâmbulo do seu documento:
-
-```latex
-\usepackage{longtable}  % tabelas multi-página
-\usepackage{booktabs}   % réguas horizontais profissionais (\toprule, \midrule, \bottomrule)
-```
-
-**Inserindo a tabela** — no corpo do documento, onde desejar:
-
-```latex
-\input{freudenstein_tabela.tex}
-```
-
-Referência cruzada: `Tabela~\ref{tab:freudenstein}`
