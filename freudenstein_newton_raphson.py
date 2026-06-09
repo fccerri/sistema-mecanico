@@ -10,7 +10,7 @@ L4 = 10.0
 # Parâmetros do método
 TOL_REL = 1e-6
 MAX_ITER = 100
-NUM_BETA = 600
+NUM_BETA = 1000
 BETA_MIN = 0.0
 BETA_MAX = 2 * np.pi
 
@@ -53,15 +53,23 @@ def resolver(betas, x0):
     iteracoes = np.zeros(n, dtype=int)
     convergencias = np.zeros(n, dtype=bool)
 
+    chute_inicial = x0
+
     for i, beta in enumerate(betas):
         x_sol, n_iter, conv = newton_raphson(x0, beta)
+
+        # Se perdeu a convergência (zona proibida), reverte a semente para o chute inicial
+        if not conv:
+            x0 = chute_inicial
+            # Tenta novamente com o chute inicial original
+            x_sol, n_iter, conv = newton_raphson(x0, beta)
 
         iteracoes[i] = n_iter
         convergencias[i] = conv
 
         if conv:
             solucoes[i] = np.mod(x_sol, 2*np.pi)
-            # x0 = solucoes[i]
+            # x0 = solucoes[i]  # semente móvel (continuação)
 
     return solucoes, iteracoes, convergencias
 
