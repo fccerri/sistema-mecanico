@@ -35,7 +35,8 @@ def newton_raphson(x0, beta, tol=TOL_REL, max_iter=MAX_ITER):
         # if abs(dfx) < 1e-14:
         #     return x_n, i, False
 
-        x_new = x_n - fx / (max(abs(dfx), 1e-14) * np.sign(dfx))
+        sign = 1.0 if dfx >= 0.0 else -1.0
+        x_new = x_n - fx / (max(abs(dfx), 1e-14) * sign)
 
         erro = abs((x_new - x_n) / x_new) if abs(x_new) > 1e-14 else abs(x_new - x_n)
         x_n = x_new
@@ -175,7 +176,7 @@ def plotar(betas,
         "o-",
         markersize=4,
         linewidth=1.5,
-        label=r"$x_0=-0.1$"
+        label=r"$\alpha_0=-0.1$"
     )
 
     ax.plot(
@@ -184,7 +185,7 @@ def plotar(betas,
         "s-",
         markersize=4,
         linewidth=1.5,
-        label=r"$x_0=2\pi/3$"
+        label=r"$\alpha_0=2\pi/3$"
     )
 
     ax.set_xlabel(r"$\beta$ (graus)", fontsize=12)
@@ -208,13 +209,13 @@ def plotar(betas,
 
 
 def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
-    # Varre o plano (β, x0): para cada semente x0 e cada β aplica Newton-Raphson
+    # Varre o plano (β, α0): para cada semente α0 e cada β aplica Newton-Raphson
     # e colore o ponto conforme o ramo encontrado. A fronteira entre as bacias
-    # é fractal — é isso que torna a semente fixa x0=2π/3 instável em parte do
+    # é fractal — é isso que torna a semente fixa α0=2π/3 instável em parte do
     # intervalo (a reta horizontal atravessa a região marmorizada).
 
-    NB = 12800   # resolução em β
-    NX = 9600   # resolução em x0
+    NB = 1600   # resolução em β
+    NX = 1200   # resolução em x0
 
     betas = np.linspace(BETA_MIN, BETA_MAX, NB)
     x0s = np.linspace(-1.5, 6.5, NX)
@@ -277,7 +278,7 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
         color="cyan",
         linewidth=1.8,
         linestyle="--",
-        label=r"$x_0=-0.1$"
+        label=r"$\alpha_0=-0.1$"
     )
 
     ax.axhline(
@@ -285,11 +286,11 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
         color="magenta",
         linewidth=1.8,
         linestyle="--",
-        label=r"$x_0=2\pi/3$"
+        label=r"$\alpha_0=2\pi/3$"
     )
 
     ax.set_xlabel(r"$\beta$ (graus)", fontsize=12)
-    ax.set_ylabel(r"$x_0$ (semente, rad)", fontsize=12)
+    ax.set_ylabel(r"$\alpha_0$ (semente, rad)", fontsize=12)
     ax.set_title("Preto = não converge · azul/laranja = ramo encontrado", fontsize=12)
 
     ax.legend(loc="upper right", framealpha=0.9)
@@ -323,8 +324,8 @@ def main():
     # for b, s, it, c in zip(betas, solucoes, iteracoes, convergencias):
     #     print(f"{np.degrees(b):10.3f} {np.degrees(s):10.3f} {s:12.6f} {it:6d} {'✔' if c else '✘':>5}")
 
-    print(f"\nConvergiram (x0=-0.1): {np.sum(convergencias1)}/{len(betas)}")
-    print(f"Convergiram (x0=2π/3): {np.sum(convergencias2)}/{len(betas)}")
+    print(f"\nConvergiram (α0=-0.1): {np.sum(convergencias1)}/{len(betas)}")
+    print(f"Convergiram (α0=2π/3): {np.sum(convergencias2)}/{len(betas)}")
 
     plotar(
         betas,
