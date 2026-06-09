@@ -213,8 +213,8 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
     # é fractal — é isso que torna a semente fixa x0=2π/3 instável em parte do
     # intervalo (a reta horizontal atravessa a região marmorizada).
 
-    NB = 6400   # resolução em β
-    NX = 4800   # resolução em x0
+    NB = 12800   # resolução em β
+    NX = 9600   # resolução em x0
 
     betas = np.linspace(BETA_MIN, BETA_MAX, NB)
     x0s = np.linspace(-1.5, 6.5, NX)
