@@ -10,7 +10,7 @@ L4 = 10.0
 # Parâmetros do método
 TOL_REL = 1e-6
 MAX_ITER = 100
-NUM_BETA = 60
+NUM_BETA = 600
 BETA_MIN = 0.0
 BETA_MAX = 2 * np.pi
 
@@ -32,10 +32,10 @@ def newton_raphson(x0, beta, tol=TOL_REL, max_iter=MAX_ITER):
         fx = f(x_n, beta)
         dfx = df(x_n, beta)
 
-        if abs(dfx) < 1e-14:
-            return x_n, i, False
+        # if abs(dfx) < 1e-14:
+        #     return x_n, i, False
 
-        x_new = x_n - fx / dfx
+        x_new = x_n - fx / (max(abs(dfx), 1e-14) * np.sign(dfx))
 
         erro = abs((x_new - x_n) / x_new) if abs(x_new) > 1e-14 else abs(x_new - x_n)
         x_n = x_new
@@ -96,6 +96,8 @@ def tracar_ramos(betas):
     for i, beta in enumerate(betas):
         if g1 is None or g2 is None:
             raizes = raizes_por_varredura(beta, sementes)
+            
+            
             if len(raizes) >= 2:
                 g1, g2 = raizes[0], raizes[-1]
             elif len(raizes) == 1:
@@ -200,6 +202,8 @@ def plotar(betas,
     )
     plt.show()
 
+    
+
     print("\n✔ Gráfico salvo em 'freudenstein_resultados.png'")
 
 
@@ -209,8 +213,8 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
     # é fractal — é isso que torna a semente fixa x0=2π/3 instável em parte do
     # intervalo (a reta horizontal atravessa a região marmorizada).
 
-    NB = 800   # resolução em β
-    NX = 600   # resolução em x0
+    NB = 6400   # resolução em β
+    NX = 4800   # resolução em x0
 
     betas = np.linspace(BETA_MIN, BETA_MAX, NB)
     x0s = np.linspace(-1.5, 6.5, NX)
@@ -297,6 +301,10 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
         bbox_inches="tight"
     )
     plt.show()
+
+    from PIL import Image
+    img_uint8 = (imagem * 255).astype(np.uint8)
+    Image.fromarray(img_uint8).save("freudenstein_bacias_hires.png")
 
     print("\n✔ Gráfico salvo em 'freudenstein_bacias.png'")
 
