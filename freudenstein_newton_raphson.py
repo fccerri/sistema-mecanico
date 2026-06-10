@@ -32,10 +32,11 @@ def newton_raphson(x0, beta, tol=TOL_REL, max_iter=MAX_ITER):
         fx = f(x_n, beta)
         dfx = df(x_n, beta)
 
-        if abs(dfx) < 1e-14:
-            return x_n, i, False
+        # if abs(dfx) < 1e-14:
+        #     return x_n, i, False
 
-        x_new = x_n - fx / dfx
+        sign = 1.0 if dfx >= 0.0 else -1.0
+        x_new = x_n - fx / (max(abs(dfx), 1e-14) * sign)
 
         erro = abs((x_new - x_n) / x_new) if abs(x_new) > 1e-14 else abs(x_new - x_n)
         x_n = x_new
@@ -52,15 +53,23 @@ def resolver(betas, x0):
     iteracoes = np.zeros(n, dtype=int)
     convergencias = np.zeros(n, dtype=bool)
 
+    chute_inicial = x0
+
     for i, beta in enumerate(betas):
         x_sol, n_iter, conv = newton_raphson(x0, beta)
+
+        # Se perdeu a convergência (zona proibida), reverte a semente para o chute inicial
+        if not conv:
+            x0 = chute_inicial
+            # Tenta novamente com o chute inicial original
+            x_sol, n_iter, conv = newton_raphson(x0, beta)
 
         iteracoes[i] = n_iter
         convergencias[i] = conv
 
         if conv:
             solucoes[i] = np.mod(x_sol, 2*np.pi)
-            # x0 = solucoes[i] //seed movel  passada pro tracar ramos
+            # x0 = solucoes[i]  # semente móvel (continuação)
 
     return solucoes, iteracoes, convergencias
 
@@ -96,6 +105,8 @@ def tracar_ramos(betas):
     for i, beta in enumerate(betas):
         if g1 is None or g2 is None:
             raizes = raizes_por_varredura(beta, sementes)
+            
+            
             if len(raizes) >= 2:
                 g1, g2 = raizes[0], raizes[-1]
             elif len(raizes) == 1:
@@ -185,7 +196,7 @@ def plotar(betas,
         solucoes2_deg,
         "s-",
         markersize=4,
-        linewidth=1.5,  
+        linewidth=1.5,
         label=label2 
     )
 
@@ -204,17 +215,19 @@ def plotar(betas,
     )
     plt.show()
 
+    
+
     print("\n✔ Gráfico salvo em 'freudenstein_resultados.png'")
 
 
 def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
-    # Varre o plano (β, x0): para cada semente x0 e cada β aplica Newton-Raphson
+    # Varre o plano (β, α0): para cada semente α0 e cada β aplica Newton-Raphson
     # e colore o ponto conforme o ramo encontrado. A fronteira entre as bacias
-    # é fractal — é isso que torna a semente fixa x0=2π/3 instável em parte do
+    # é fractal — é isso que torna a semente fixa α0=2π/3 instável em parte do
     # intervalo (a reta horizontal atravessa a região marmorizada).
 
-    NB = 800   # resolução em β
-    NX = 600   # resolução em x0
+    NB = 1600   # resolução em β
+    NX = 1200   # resolução em x0
 
     betas = np.linspace(BETA_MIN, BETA_MAX, NB)
     x0s = np.linspace(-1.5, 6.5, NX)
@@ -302,6 +315,7 @@ def plotar_bacias(x0_1=-0.1, x0_2=2*np.pi/3):
     )
     plt.show()
 
+
     print("\n✔ Gráfico salvo em 'freudenstein_bacias.png'")
 
 
@@ -328,7 +342,7 @@ def main():
     print(f"\nConvergiram (alpha_0=-0.1): {np.sum(convergencias_fixa_1)}/{len(betas)}")
     print(f"Convergiram (alpha_0=2π/3): {np.sum(convergencias_fixa_2)}/{len(betas)}")
 
-    ramo1, ramo2 = tracar_ramos(betas)
+    ramo2, ramo1  = tracar_ramos(betas)
 
     convergencias_movel_1 = ~np.isnan(ramo1)
     convergencias_movel_2 = ~np.isnan(ramo2)

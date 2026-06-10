@@ -79,7 +79,6 @@ def get_joints_from_math(beta_val, x0_val):
 
     return (Lx, Ly), (Rx, Ry), (TLx, TLy), (TRx, TRy), alpha_angle, iterations, converged
 
-
 # --- Main Loop ---
 running = True
 while running:
